@@ -57,93 +57,86 @@ const posts = [
 ];
 
 posts.forEach(element => {
-    // comandi per header post
     const container = document.getElementById("container");
-
-    const postDiv = document.createElement("div")
-    postDiv.classList.add("post");
-    container.append(postDiv);
-
-    const postHeader = document.createElement("div");
-    postHeader.classList.add("post__header");
-    postDiv.append(postHeader);
-
-    const postMeta = document.createElement("div");
-    postMeta.classList.add("post-meta");
-    postHeader.append(postMeta);
-    const postMetaIcon = document.createElement("div");
-    postMetaIcon.classList.add("post-meta__icon");
-    postMeta.append(postMetaIcon);
-    const authorImg = document.createElement("img");
-    authorImg.src = element.author.image;
-    authorImg.classList.add("profile-pic");
-    postMetaIcon.append(authorImg);
-
-    const postMetaData = document.createElement("div");
-    postMetaData.classList.add("post-meta__data");
-    postMeta.append(postMetaData);
-    const postMetaAuthor = document.createElement("div");
-    postMetaAuthor.classList.add("post-meta__author");
-    const authorText = document.createTextNode(element.author.name);
-    postMetaAuthor.append(authorText);
-
-    postMetaData.append(postMetaAuthor);
-    const postMetaTime = document.createElement("div");
-    postMetaTime.classList.add("post-meta__time");
-    const postMetaTimeText = document.createTextNode(element.created);
-    postMetaData.append(postMetaTime);
-    postMetaTime.append(postMetaTimeText);
-
-    // comandi corpo post
-    const postText = document.createElement("div");
-    postText.classList.add("post__text");
-    const postText1 = document.createTextNode(element.content);
-    postText.append(postText1);
-    postDiv.append(postText);
-
-    const postImg = document.createElement("div");
-    postImg.classList.add("post__image");
-    postDiv.append(postImg);
-    const postImgImg = document.createElement("img");
-    postImgImg.src = element.media;
-    postImg.append(postImgImg);
-
-    // comandi footer post
-    const postFooter = document.createElement("div");
-    postFooter.classList.add("post__footer");
-    postDiv.append(postFooter);
-
-    const likes = document.createElement("div");
-    likes.classList.add("likes", "js-likes");
-    postFooter.append(likes);
-    const likesCta = document.createElement("div");
-    likesCta.classList.add("likes__cta");
-    likes.append(likesCta);
-
-    const likeButton = document.createElement("a");
-    likeButton.classList.add("like-button", "js-like-button");
-    likeButton.href = "#";
-    likesCta.append(likeButton);
-    const likeButtonIcon = document.createElement("i");
-    likeButtonIcon.classList.add("like-button__icon", "fas", "fa-thumbs-up");
-    likeButtonIcon.ariaHidden = "true";
-    likeButton.append(likeButtonIcon);
-    const likeButtonLabel = document.createElement("span");
-    likeButtonLabel.classList.add("like-button__label");
-    const likeButtonSpan = document.createTextNode(" Mi Piace");
-    likeButtonLabel.append(likeButtonSpan);
-    likeButton.append(likeButtonLabel);
-
-    const likesCounter = document.createElement("div");
-    likesCounter.classList.add("likes__counter");
-    const bLikes = document.createElement("b");
-    bLikes.setAttribute('id','likes-counter-1');
-    const bLikesText = document.createTextNode("80");
-    bLikes.append(bLikesText);
-    const likesCounterText = document.createTextNode("Piace a" + bLikes + "persone");
-    likesCounter.append(likesCounterText);
-    likes.append(likesCounter);
+    container.innerHTML += 
+        `<div class="post">
+                <div class="post__header">
+                    <div class="post-meta">                    
+                        <div class="post-meta__icon">
+                            <img class="profile-pic" src="${element.author.image}" alt="Phil Mangione">                    
+                        </div>
+                        <div class="post-meta__data">
+                            <div class="post-meta__author"> ${element.author.name} </div>
+                            <div class="post-meta__time"> ${element.created} </div>
+                        </div>                    
+                    </div>
+                </div>
+                <div class="post__text"> ${element.content} </div>
+                <div class="post__image">
+                    <img src="${element.media}" alt="">
+                </div>
+                <div class="post__footer">
+                    <div class="likes js-likes">
+                        <div class="likes__cta">
+                            <a class="like-button  js-like-button" href="#" data-postid="1">
+                                <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                                <span class="like-button__label">Mi Piace</span>
+                            </a>
+                        </div>
+                        <div class="likes__counter">
+                            Piace a <b id="like-counter-1" class="js-likes-counter"> ${element.likes} </b> persone
+                        </div>
+                    </div> 
+                </div>            
+            </div>`
 });
+
+// Conteggio likes tramite bottone dedicato
+const likeButton = document.querySelectorAll(".js-like-button");
+
+likeButton.forEach((button, index) => {
+    button.addEventListener("click",
+        function () {
+            button.classList.toggle("like-button--liked");
+            if (button.classList.contains("like-button--liked")) {
+                posts[index].likes++;
+            } else {
+                posts[index].likes--;
+            }
+
+            let likesCounter = document.getElementById("like-counter-" + posts[index].id);
+            likesCounter.innerText = posts[index].likes;
+        }
+    )
+});
+
+// funzione per verificare presenza immagine
+function checkImage(currentElement) {
+
+    if (currentElement.image === null) {
+        return `<p><strong>` + getInitials(currentElement.name) + `</strong></p>`;
+    } else {
+        return `<img src="` + currentElement.image + `" alt=""></img>`;
+    }
+}
+
+// Funziona per prendere iniziali parole
+function getInitials(stringName) {
+    let initials = "";
+    // controllo che la stringa abbia spazi
+    if(stringName.includes(" ")) {
+        // salvo le parole in un array
+        const halfName = stringName.split(" ");
+        halfName.forEach((currentWord) => {
+            initials += currentWord.charAt(0) + ".";
+        });
+        return initials;
+    } else {
+        return stringName.charAt(0);
+    }
+ 
+};
+
 
 
 
